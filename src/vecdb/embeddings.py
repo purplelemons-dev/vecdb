@@ -8,10 +8,10 @@ class Embeddings:
 
     def __call__(
         self, text: "str|list[str]", **openai_options
-    ) -> "dict[str,np.ndarray]":
+    ) -> "dict[str,list[float]]":
         "Uses ada v2 to embed the given text"
         return {
-            doc: np.array(embedding.embedding)
+            doc: embedding.embedding
             for doc, embedding in zip(
                 [text] if isinstance(text, str) else text,
                 self.openai_client.embeddings.create(
@@ -29,9 +29,7 @@ class Embeddings:
         self.openai_client = openai.OpenAI(api_key=api_key, organization=org_id)
 
     @staticmethod
-    def closeness(
-        vec1: "np.ndarray[float]|list[float]", vec2: "np.ndarray[float]|list[float]"
-    ) -> float:
+    def closeness(vec1: list[float], vec2: list[float]) -> float:
         "Returns the closeness score between the two given vectors"
 
         vec1len, vec2len = len(vec1), len(vec2)

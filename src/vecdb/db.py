@@ -3,27 +3,38 @@ from time import time
 import os.path
 from pickle import dump, load
 from typing import Any
-from numpy import ndarray
 
 
 class Database:
-    def __init__(self, data: dict[str, ndarray] = None):
+    def __init__(self, data: dict[str, list[float]] = None):
         self.table = data if data is not None else dict()
 
     def __repr__(self):
-        return f"<Database {self.table}>"
+        return f"Database({self.table})"
+
+    @property
+    def __dict__(self):
+        return self.table
 
     def to_json(self) -> dict[str, list[float]]:
-        return {doc: array.tolist() for doc, array in self.table.items()}
+        # Originally a list comprehension:
+        # json_out = {doc: array.tolist() if isinstance(array,ndarray) else array for doc, array in self.table.items()}
+        return self.table
 
-    def get(self, key):
-        return self.table[key]
+    def get(self, key, default=None):
+        try:
+            return self.table[key]
+        except KeyError:
+            return default
 
     def set(self, key, value):
         self.table[key] = value
 
     def delete(self, key):
-        del self.table[key]
+        try:
+            del self.table[key]
+        except KeyError:
+            pass
 
     def save(self, path: str):
         with open(path, "wb") as f:
@@ -68,10 +79,17 @@ class DatabaseManager:
             db.save(f"{self.vec_dir}/{id}.pkl.locked")
 
     def get(self, database_id: str) -> Database:
-        return self.databases[database_id]
+        try:
+            return self.databases[database_id]
+        except KeyError as e:
+            return None
 
     def delete(self, database_id: str):
-        del self.databases[database_id]
+        try:
+            del self.databases[database_id]
+            os.remove(f"{self.vec_dir}/{database_id}.pkl.locked")
+        except KeyError:
+            raise ValueError("Database ID does not exist")
 
     def new(self, database_id: "str|int" = None, data: dict[str, Any] = None):
         "Creates a new database and returns its ID (id can be custom or auto-generated)"
