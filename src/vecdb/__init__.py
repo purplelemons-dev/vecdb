@@ -4,7 +4,7 @@ from .embeddings import Embeddings
 
 
 def run_database_server(
-    host: str,
+    host: str = "127.0.0.1",
     port: int = 6969,
     vec_dir: str = "./vecdb",
     openai_api_key: str = None,

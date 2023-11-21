@@ -1,5 +1,4 @@
 import openai
-from .env import Secrets
 import numpy as np
 
 
@@ -20,12 +19,7 @@ class Embeddings:
             )
         }
 
-    def __init__(self, api_key: str = None, org_id: str = None):
-        if api_key is None:
-            api_key = Secrets.OPENAI_API_KEY
-        if org_id is None:
-            org_id = Secrets.OPENAI_ORG_ID
-
+    def __init__(self, api_key: str, org_id: str):
         self.openai_client = openai.OpenAI(api_key=api_key, organization=org_id)
 
     @staticmethod
