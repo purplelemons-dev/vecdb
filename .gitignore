@@ -3,3 +3,5 @@ tests/vecdb
 env.py
 .env
 *.pkl*
+/build
+/src/vecdb.egg-info
