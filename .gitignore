@@ -5,3 +5,4 @@ env.py
 *.pkl*
 /build
 /src/vecdb.egg-info
+/.venv
