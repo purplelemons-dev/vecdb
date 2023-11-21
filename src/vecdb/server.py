@@ -84,6 +84,9 @@ class Handler(BaseHTTPRequestHandler):
                 #self.send_json(200, db)
                 self.send_text(200, json.dumps(db,default=lambda o: o.__dict__), content_type="application/json")
                 return
+            elif database_id == "databases":
+                self.send_json(200, self.dbManager.database_names)
+                return
             else:
                 self.send_response(404, f"Unknown API path: {api_path}")
                 self.end_headers()
